@@ -10,35 +10,36 @@ using System.Diagnostics;
 
 namespace Project1
 {
-	class MainClass
+	static class MainClass
 	{
-		protected static void myHandler(object sender, ConsoleCancelEventArgs args)
+		static List<string> history = new List<string>();
+
+		private static void OnCancelKeyPress(object sender, ConsoleCancelEventArgs args)
 		{
+			for (int i = (history.Count - 1), j = 0; i >= 0; i--, j++) 
+			{
+				Console.WriteLine(history[i]);
+				
+				if(j==9) break;
+			}
+
 			args.Cancel = true;
 		}
 
 		public static void Main (string[] args)
 		{
-
-			List<string> history = new List<string>();
-			Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
+			Console.CancelKeyPress += OnCancelKeyPress;
 	
 			while (true)
 			{
-				Console.Write("#sh>");
+				Console.Write("#ssh>");
 
 				//This is the entire line
 				string command = Console.ReadLine();
 
-				//Shows history when they hit Ctrl+C
+				//If the command comes out null continue
 				if (command == null)
 				{
-					for (int i = (history.Count - 1), j = 0; i >= 0; i--, j++) 
-					{
-						Console.WriteLine(history[i]);
-
-						if(j==9) break;
-					}
 					continue;
 				}
 
@@ -105,12 +106,6 @@ namespace Project1
 
 				Fork (exe, arguments);
 			}
-		}
-
-		//Handler used for Ctrl+C so shell doesn't terminate
-		protected static void myHandler(object sender, ConsoleCancelEventArgs args)
-		{
-			args.Cancel = true;
 		}
 
 		//Forks process to run
